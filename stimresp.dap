@@ -19,6 +19,7 @@ end
 odefine outdata 1
 	set opipe0 a0
 	time 5.0
+	sample burst
 end
 
 // define procedure to send input (Analog Input) channel 

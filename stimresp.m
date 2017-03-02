@@ -9,6 +9,8 @@
 dt = 5e-6;
 Fs = 1/dt;
 
+stimdur = 1000;
+
 % open DAP
 dapallopen();
 
@@ -23,8 +25,10 @@ nBytes1 = dappavl(hBinToDap);
 fprintf('%d bytes available\n', nBytes1)
 
 % create stimulus
-stimulus = 10000*sin2array(synmonosine(1000, Fs, 100, 1, 0), 1, Fs);
-
+stimulus = 20000*sin2array(synmonosine(stimdur, Fs, 100, 1, 0), 100, Fs);
+stimulus(1) = max(stimulus);
+stimulus(end) = -1*stimulus(1);
+stimulus = [stimulus 0];
 % Download the data file for the DAPL configuration to use as 'stimulus'
 disp('Downloading the stimulus data')
 ret = dapputm(hBinToDap, stimulus, 'int16');
@@ -44,7 +48,7 @@ disp('Collecting the response data')
 % Get response 
 timewait = 1100;
 timeout = 2000;
-response = dapgetm(hBinFromDap, [1, length(stimulus)], 'int16', timewait, timeout);
+response = dapgetm(hBinFromDap, [1, ms2bin(stimdur+100, Fs)], 'int16', timewait, timeout);
 
 % Terminate DAP processing and shut down everything
 dappstr(hTextToDap,'STOP');
