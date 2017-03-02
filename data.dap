@@ -1,0 +1,28 @@
+// Log data from 2 channels: a 'stimulus' channel and a 'response' 
+// channel. Log data in pairs. Use a relatively fast sampling rate
+// to obtain each group of 1000 samples. Collect one block every second.
+// This runs continuously until stopped by the host.
+//
+reset
+
+pipes  pThinned word;
+
+// Capture one stimulus-response pair per 10 microseconds.
+// Each block of 1000 samples requires 10 milliseconds.
+idefine  fastcapture 
+  channels  2
+  set ipipe0  s0    ; analog 'stimulus' channel, single ended
+  set ipipe1  s1    ; analog 'response' channel, single ended
+  time  5.0          
+end
+
+// To retain one 1000 sample block per second, from the 100 
+// blocks per second that are captured, alternately retain
+// one block of 1000 samples, then drop the next 99 blocks. 
+pdef  select
+  skip(ipipe(0,1), 0, 1000, 99000, pThinned) 
+  copy(pThinned,$binout)   ; send data to host
+end
+
+// Start automatically and run continuously
+start 

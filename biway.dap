@@ -1,0 +1,47 @@
+// Combine signal data from the PC host, a waveform computed
+// on the DAP board, and filtered data from an input channel.
+// Return the resulting waveform to the host. 
+// 
+
+// reset system
+reset
+
+// define pipes
+//		pHost		waveform data from host
+//		pComputed	locally calculated wavform (synthesized)
+//		pFiltered	filtered input data from channel S0 (ipipe0)
+//		pReturned	combination of computed filtered and waveform data
+pipes   pHost, pComputed, pFiltered, pReturned
+
+// Gaussian-weight smoothing filter
+vector   gweight word = ( 149, 380, 856, 1702, 2986, 4626, 6323, 7626, 8119 )
+
+// Disable the sampled input data until a signal is available
+variable   INSWITCH word = 0
+
+// Sample the input signal at 16000 samples per second
+idefine  incapture
+  channels  1
+  set  ipipe0  S0
+  time  62.5
+end
+
+// Calculate a waveform. Filter an input signal. 
+// Receive waveform data from the PC host.  Combine
+// these three to obtain the signal data returned to
+// the host application.
+pdef a
+  // Waveform data from host
+  copy($binin, pHost)
+  // Locally calculated waveform
+  sinewave(10000, 120, pComputed)
+  // Filtered data from input signal
+  firfilter(ipipe0, gweight, 9, 1, 0, 0, pFiltered)
+  // Combine the signals
+  pReturned = pHost + pComputed + pFiltered * INSWITCH 
+  // Send the result back to the host
+  copy(pReturned, $BinOut)
+end
+
+// Let the host start this configuration after the download is done
+

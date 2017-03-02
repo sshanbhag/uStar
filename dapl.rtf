@@ -1,0 +1,434 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1348\cocoasubrtf170
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\froman\fcharset0 Times-Roman;\f2\ftech\fcharset77 Symbol;
+\f3\fnil\fcharset0 Menlo-Regular;\f4\fswiss\fcharset0 ArialMT;\f5\froman\fcharset0 TimesNewRomanPSMT;
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue255;\red0\green0\blue109;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}.}{\leveltext\leveltemplateid1\'02\'00.;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listname ;}\listid1}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
+\margl1440\margr1440\vieww13160\viewh19880\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ri-2161\pardirnatural
+
+\f0\fs24 \cf0 //APP01.DAP\
+// Application 1: Sampling Three Inputs\
+// from Apps2000.pdf\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri-2161
+
+\f1 \cf0 \expnd0\expndtw0\kerning0
+RESET			// resets board\
+IDEFINE A 3			// Start input procedure with IDEFINE <name> <# input pipes for procedure\
+     SET IPIPE0 S2		// input proc. SET IPIPE<#> <input ID> in this case Singleended, input 2\
+     SET IPIPE1 S5		// input proc, SingleEnded, input 5\
+     SET IPIPE2 D0		// input proc, Differential, input 0\
+     TIME 10000		// set sampling time to 10,000 microseconds. with 3 pins, inputs are sampled every 30K us\
+     END			// end input procedure\
+PDEFINE B			// start processing procedure with PDEFINE <name>\
+     BPRINT			// tranfer binary data from all input channels to binary pipe $BINOUT (direct to PC)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri-2161\sa240
+\cf0 \expnd0\expndtw0\kerning0
+     END 			// end of processing procedure\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ri-2161\pardirnatural
+
+\f0 \cf0 \kerning1\expnd0\expndtw0 \
+To start acquisition, send START command: START <procedure names>\
+\
+START A, B\
+\
+To stop acquisition, send STOP command:\
+\
+STOP\
+\
+//APP02.DAP\
+// Application 2: Sampling 5000 values with hardware triggering\
+// from Apps2000.pdf\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri-2161
+
+\f1 \cf0 \expnd0\expndtw0\kerning0
+RESET			// reset\
+IDEFINE A 1			// define input procedure A, one channel inpput\
+     SET IPIPE0 S0		// input process, single ended, pin 0\
+     TIME 20			// time interval of 20 microseconds between samples (50 kHz rate)\
+     COUNT 100		// acquire 100 samples -> 2x10^6 us = 2 ms\
+     HTRIGGER ONESHOT	// use external triggering - start acquisition when ext. trigger goes from low to high.\
+     END\
+PDEFINE B\
+     BPRINT\
+     END \
+START A, B \
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri-2161\sa240
+
+\fs32 \cf2 \expnd0\expndtw0\kerning0
+HTRIGGER (for output updating) 
+\fs24 \cf0 \expnd0\expndtw0\kerning0
+\
+
+\fs26 \expnd0\expndtw0\kerning0
+Specify the operating mode of the output hardware trigger signal. 
+\fs24 \expnd0\expndtw0\kerning0
+\
+	HTRIGGER <type> \
+
+\fs26 \expnd0\expndtw0\kerning0
+Parameters 
+\fs24 \expnd0\expndtw0\kerning0
+\
+	<type>		
+\fs26 \expnd0\expndtw0\kerning0
+A keyword:	
+\fs24 \expnd0\expndtw0\kerning0
+ONESHOT | GATED | OFF \
+
+\fs26 \expnd0\expndtw0\kerning0
+Description 
+\fs24 \expnd0\expndtw0\kerning0
+\
+
+\fs26 \expnd0\expndtw0\kerning0
+Including the 
+\fs24 \cf3 \expnd0\expndtw0\kerning0
+HTRIGGER 
+\fs26 \cf0 \expnd0\expndtw0\kerning0
+in an output updating configuration determines the manner that output updating responds to the external hardware output triggering signal. The 
+\fs24 \expnd0\expndtw0\kerning0
+<type> 
+\fs26 \expnd0\expndtw0\kerning0
+keyword specifies the operating mode and must be one of the following: 
+\fs24 \expnd0\expndtw0\kerning0
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri-2161
+\cf0 \expnd0\expndtw0\kerning0
+OFF\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri-2161
+
+\fs26 \cf0 \expnd0\expndtw0\kerning0
+The default when the 
+\fs24 \cf3 \expnd0\expndtw0\kerning0
+HTRIGGER 
+\fs26 \cf0 \expnd0\expndtw0\kerning0
+command is omitted from the output configuration. The DAP does not respond to the external hardware signal. Updating can begin when sufficient data are available in the output buffers. 
+\f2 \expnd0\expndtw0\kerning0
+\uc0\u8232 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri-2161
+
+\f1\fs24 \cf0 \expnd0\expndtw0\kerning0
+ONESHOT\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri-2161
+
+\fs26 \cf0 \expnd0\expndtw0\kerning0
+Updating can begin when the hardware output triggering signal goes active. Once the trigger level is detected and updating is underway, the DAP no longer responds to the external hardware signal. 
+\f2 \expnd0\expndtw0\kerning0
+\uc0\u8232 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri-2161
+
+\f1\fs24 \cf0 \expnd0\expndtw0\kerning0
+GATED\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri-2161
+
+\fs26 \cf0 \expnd0\expndtw0\kerning0
+Update clocking proceeds while the hardware trigger signal is at the active level, and is suspended while the hardware trigger signal is at the inactive level. \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri-2161
+
+\f2 \cf0 \kerning1\expnd0\expndtw0 	\expnd0\expndtw0\kerning0
+\uc0\u8232 
+\f1 \expnd0\expndtw0\kerning0
+The hardware trigger signal is described in the Data Acquisition Processor hardware documentation. It is not recognized until the 
+\fs24 \cf3 \expnd0\expndtw0\kerning0
+OUTPUTWAIT 
+\fs26 \cf0 \expnd0\expndtw0\kerning0
+condition is satisfied. \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri-2161
+
+\f2 \cf0 \expnd0\expndtw0\kerning0
+\uc0\u8232 
+\f1 \expnd0\expndtw0\kerning0
+Example :\
+
+\f2 \expnd0\expndtw0\kerning0
+\uc0\u8232 
+\f1\fs24 \expnd0\expndtw0\kerning0
+	HTRIGGER   GATED\
+\
+
+\fs26 \expnd0\expndtw0\kerning0
+	Specify that the hardware trigger allows output updates to be delivered when the external trigger level \
+	is active, and suspends updates when the external trigger level is inactive. 
+\f2 \expnd0\expndtw0\kerning0
+\uc0\u8232 
+\f1 \expnd0\expndtw0\kerning0
+\
+ See Also: 
+\fs24 \cf3 \expnd0\expndtw0\kerning0
+CLCLOCKING
+\fs26 \cf0 \expnd0\expndtw0\kerning0
+, 
+\fs24 \cf3 \expnd0\expndtw0\kerning0
+CLOCK
+\fs26 \cf0 \expnd0\expndtw0\kerning0
+, 
+\fs24 \cf3 \expnd0\expndtw0\kerning0
+UPDATE
+\fs26 \cf0 \expnd0\expndtw0\kerning0
+, 
+\fs24 \cf3 \expnd0\expndtw0\kerning0
+OUTPUTWAIT, HTRIGGER for input 
+\f2\fs26 \cf0 \expnd0\expndtw0\kerning0
+\uc0\u8232 \
+\
+\
+\
+\pard\pardeftab720\sa240
+
+\f1\fs32 \cf2 \expnd0\expndtw0\kerning0
+MATLAB: Set 1 
+\fs24 \cf0 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720\sa240
+
+\fs26 \cf0 \expnd0\expndtw0\kerning0
+Example set 1 demonstrates the use of a Data Acquisition Processor with MATLAB. The set contains three MATLAB files, init.m, data.m and stop.m, and one DAPL file data.dap. 
+\fs24 \expnd0\expndtw0\kerning0
+\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sl336\slmult1
+\ls1\ilvl0
+\fs26 \cf0 \kerning1\expnd0\expndtw0 {\listtext	1.	}\expnd0\expndtw0\kerning0
+init.m \'96shows how to initialize communication with the DAP from MATLAB environment. \
+\ls1\ilvl0\kerning1\expnd0\expndtw0 {\listtext	2.	}\expnd0\expndtw0\kerning0
+data.m \'96shows how to read data values from input channels into matrices. \
+\ls1\ilvl0\kerning1\expnd0\expndtw0 {\listtext	3.	}\expnd0\expndtw0\kerning0
+stop.m \'96shows how to terminate communication with the DAP. \
+\ls1\ilvl0\kerning1\expnd0\expndtw0 {\listtext	4.	}\expnd0\expndtw0\kerning0
+data.dap\'96shows how to configure the DAP. \
+\pard\pardeftab720\sa240
+\cf0 \expnd0\expndtw0\kerning0
+\ul \ulc0 \
+File INIT.M 
+\fs24 \expnd0\expndtw0\kerning0
+\ulnone \
+
+\fs26 \expnd0\expndtw0\kerning0
+This file shows an example on how to initializes communication with the Data Acquisition Processor. 
+\fs24 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720\li720\fi4
+
+\f3 \cf0 \expnd0\expndtw0\kerning0
+%% File INIT.M %%\uc0\u8232 % Open text and binary handles to ACCEL device \
+texthandle = dapopen('\\\\.\\dap0\\$sysin', 'write') \
+if texthandle == -1\uc0\u8232 	error('Error opening DAP text handle') \
+end\uc0\u8232 binaryhandle = dapopen('\\\\.\\dap0\\$binout', 'read') \
+if binaryhandle == -1\uc0\u8232 	error('Error opening DAP binary handle') \
+end \
+% Send a command to reset the DAP \
+dappstr(texthandle, 'RESET');\uc0\u8232 % Flush old DAP data in binary pipe \
+dapflshi(binaryhandle); \
+\pard\pardeftab720
+
+\f1\fs26 \cf0 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720\sa240
+\cf0 \expnd0\expndtw0\kerning0
+\ul File DATA.M 
+\fs24 \expnd0\expndtw0\kerning0
+\ulnone \
+
+\fs26 \expnd0\expndtw0\kerning0
+This file shows how to configure the Data Acquisition Processor with the DAPL file data.dap, and reads data from the Data Acquisition Processor into matrices in MATLAB environment. 
+\fs24 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720\li725\fi1
+
+\f3 \cf0 \expnd0\expndtw0\kerning0
+%% File DATA.M %%\uc0\u8232 % Configure DAP using DAPL command file DATA.DAP \
+cnfg = dapcnfig(texthandle, 'data.dap'); \
+if cnfg < 1\uc0\u8232 	% Print error message \
+	error('Error configuring DAP') \
+end \
+% Get DAP data\uc0\u8232 % Read data from DAP \
+channel0 = dapgetm(binaryhandle,[200,1],\'91int16\'92) \
+channel1 = dapgetm(binaryhandle,[200,1],\'91int16\'92) \
+\pard\pardeftab720
+
+\f1 \cf0 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720\sa240
+
+\fs26 \cf0 \expnd0\expndtw0\kerning0
+\ul File STOP.M 
+\fs24 \expnd0\expndtw0\kerning0
+\ulnone \
+
+\fs26 \expnd0\expndtw0\kerning0
+This file shows how to terminate communication and closes all handles to the Data Acquisition Processor. 
+\fs24 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720\li726\fi-6
+
+\f3 \cf0 \expnd0\expndtw0\kerning0
+%% File STOP.M %% \
+% Stop DAP communication by sending STOP command to the DAP \
+dappstr(texthandle,'STOP'); \
+% Close text and binary handles to ACCEL device \
+textclose = dapclose(texthandle) \
+if textclose == -1\uc0\u8232 	error('Error closing DAP text handle') \
+end\uc0\u8232 binclose = dapclose(binaryhandle) \
+if binclose==-1\uc0\u8232 	error('Error closing DAP binary handle') \
+end \
+\pard\pardeftab720\sa240
+
+\f1\fs26 \cf0 \expnd0\expndtw0\kerning0
+\
+\expnd0\expndtw0\kerning0
+\ul DAPL Command File: DATA.DAP 
+\fs24 \expnd0\expndtw0\kerning0
+\ulnone \
+
+\fs26 \expnd0\expndtw0\kerning0
+This file shows the DAPL configuration for the Data Acquisition Processor. 
+\fs24 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720\li725
+
+\f3 \cf0 \expnd0\expndtw0\kerning0
+;; DAPL file, DATA.DAP ;; \
+reset \
+\pard\pardeftab720\li725
+\cf0 \expnd0\expndtw0\kerning0
+; Sample analog input, s0 \
+; Sample analog input, s1 \
+; Time of 5 msec\uc0\u8232 ; Take 1000 samples \
+\pard\pardeftab720\li725
+\cf0 \expnd0\expndtw0\kerning0
+idef a 2 \
+	set ip0 s0 \
+	set ip1 s1 \
+	time 5000 \
+	count 1000 \
+end \
+\pard\pardeftab720\li725
+\cf0 \expnd0\expndtw0\kerning0
+; Send data through binary communication pipe \
+\pard\pardeftab720\li725
+\cf0 \expnd0\expndtw0\kerning0
+pdef b\uc0\u8232 	merge(ip0, ip1, $binout)\u8232 end \
+start a, b \
+\pard\pardeftab720\sa240
+
+\f1\fs26 \cf0 \expnd0\expndtw0\kerning0
+\
+\expnd0\expndtw0\kerning0
+\ul Running the Examples 
+\fs24 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720
+
+\fs26 \cf0 \expnd0\expndtw0\kerning0
+\ulnone To run the example at the MATLAB command window, type the following in the \
+MATLAB command window in sequence: \
+\pard\pardeftab720
+
+\fs24 \cf0 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720\li712\fi9
+
+\f3 \cf0 \expnd0\expndtw0\kerning0
+init\
+data\
+stop 
+\f1 \expnd0\expndtw0\kerning0
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri-2161
+\cf0 \expnd0\expndtw0\kerning0
+\
+\
+\
+\pard\pardeftab720\sa240
+
+\f4\b\fs32 \cf2 \expnd0\expndtw0\kerning0
+Application 46 \'97 Sending Data to a Data Acquisition Processor 
+\f1\b0\fs24 \cf0 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720\sa240
+
+\f5\fs26 \cf0 \expnd0\expndtw0\kerning0
+A Data Acquisition Processor supports high-speed binary data transfer to and from a host PC. Receiving data from the PC is similar to sending data to the PC. This application provides two examples illustrating PC to Data Acquisition Processor binary transfer. The first example shows how to transfer previously logged data to a Data Acquisition Processor for analog output. The second example illustrates the use of a Data Acquisition Processor for postprocessing. 
+\f1\fs24 \expnd0\expndtw0\kerning0
+\
+
+\f5\fs26 \expnd0\expndtw0\kerning0
+A Data Acquisition Processor reads data from the PC through the 
+\f1\fs24 \expnd0\expndtw0\kerning0
+$BININ 
+\f5\fs26 \expnd0\expndtw0\kerning0
+communication pipe. Any task can use 
+\f1\fs24 \expnd0\expndtw0\kerning0
+$BININ 
+\f5\fs26 \expnd0\expndtw0\kerning0
+as its input pipe. The following DAPL commands illustrate reading data from the PC and sending the data to output channel pipe 0. 
+\f1\fs24 \expnd0\expndtw0\kerning0
+\
+RESET PDEF A \
+\pard\pardeftab720
+\cf0 \expnd0\expndtw0\kerning0
+     COPY ($BININ, OPIPE0)\
+\pard\pardeftab720\sa240
+\cf0 \expnd0\expndtw0\kerning0
+END ODEF B 1 \
+\pard\pardeftab720
+\cf0 \expnd0\expndtw0\kerning0
+     SET OPIPE0 A0\
+     TIME 10000\
+     END\
+\pard\pardeftab720\sa240
+\cf0 \expnd0\expndtw0\kerning0
+START A, B \
+\pard\pardeftab720\sa240
+
+\f5\fs26 \cf0 \expnd0\expndtw0\kerning0
+A 
+\f1\fs24 \expnd0\expndtw0\kerning0
+COPY 
+\f5\fs26 \expnd0\expndtw0\kerning0
+command reads data from 
+\f1\fs24 \expnd0\expndtw0\kerning0
+$BININ 
+\f5\fs26 \expnd0\expndtw0\kerning0
+and sends the data to output channel pipe 0. An output procedure defines output channel pipe 0 for analog output on 
+\f1\fs24 \expnd0\expndtw0\kerning0
+A0 
+\f5\fs26 \expnd0\expndtw0\kerning0
+at 100 Hz. 
+\f1\fs24 \expnd0\expndtw0\kerning0
+\
+
+\f5\fs26 \expnd0\expndtw0\kerning0
+DAPview Plus can transfer data from a file to the Data Acquisition Processor using the 
+\f1\fs24 \expnd0\expndtw0\kerning0
+Data file 
+\f5\fs26 \expnd0\expndtw0\kerning0
+option in the 
+\f1\fs24 \expnd0\expndtw0\kerning0
+Control 
+\f5\fs26 \expnd0\expndtw0\kerning0
+menu. Programs created with programming languages also can transfer data to a Data Acquisition Processor. 
+\f1\fs24 \expnd0\expndtw0\kerning0
+\
+
+\f5\fs26 \expnd0\expndtw0\kerning0
+A Data Acquisition Processor also can process data from the PC and send the results back to the PC. The following example illustrates how a Data Acquisition Processor with an on-board DSP chip accelerates FFT processing of PC data. 
+\f1\fs24 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720
+\cf0 \expnd0\expndtw0\kerning0
+RESET \
+PDEF A  \
+	FFT (5, 8, 1, $BININ, $BINOUT)\
+END \
+START A \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri-2161
+\cf0 \expnd0\expndtw0\kerning0
+\
+\
+}
