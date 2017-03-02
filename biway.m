@@ -25,7 +25,6 @@ dappstr(hTextToDap,'START');
 
 % Ignore "startup transient" for first cycle of 300 points
 disp('Collecting the response data')
-response = dapgetm(hBinFromDap, [300, 1], 'int16');
 
 % Get response for second stimulus cycle of 300 points
 response = dapgetm(hBinFromDap, [300, 1], 'int16');

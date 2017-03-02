@@ -1,0 +1,28 @@
+//options errorq=off, overflowq=off, underflowq=off, sysinecho=on, prompt=on, ainexpand = off
+
+// reset board
+reset
+
+// define inputs, 500 kHz Fs
+idefine MslInput 2
+  set IP0 s0
+  set IP1 s1
+  time 1.000    // 2 us / 2 ch
+end
+
+// define procedure to merge AI channels and send on $BinOut
+pdefine MslProc
+  // Merge input pipes to PC.
+  copy(IP(0..1), $BinOut)
+end
+
+// define output stream
+odefine MslOutput 1
+  set OP0 a0
+  time 2.000    // 2 us / 1 ch
+  htrigger oneshot
+  update burst
+end
+
+start
+ 

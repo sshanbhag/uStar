@@ -1,0 +1,36 @@
+// Ouput signal data from the PC host, 
+// Return the resulting waveform to the host. 
+// 
+
+// reset system
+reset
+
+// Disable the sampled input data until a signal is available
+variable   INSWITCH word = 0
+
+// define input stream
+// Sample the input signal at 200,000 (1 / 5 usec) samples per second
+idefine  indata 1
+  set ipipe0 S0
+  time 5.0
+end
+
+// output stream
+odefine outdata 1
+	set opipe0 a0
+	time 5.0
+end
+
+// define procedure to send input (Analog Input) channel 
+// to the $BinOut pipe (which is accessible by the host application)
+pdefine Iproc
+	copy(ipipe0, $BinOut);
+end
+
+// define procedure to send data to output (Analog Output) channel
+pdefine Oproc
+	copy($BinIn, opipe0)
+end
+
+// Let the host start this configuration after the download is done
+
