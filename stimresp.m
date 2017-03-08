@@ -6,12 +6,21 @@
 
 
 % define sample rate from sample interval (specified in stimresp.dap)
-dt = 5e-6;
+dt = 2e-6;
 Fs = 1/dt;
-stimamp = 20000;
+% scaling factor for stimulus
+stimamp = 10000;
+% stimulus duration (ms)
 stimdur = 100;
+% stimulus frequency (Hz)
 stimfreq = 100;
-recordsamples = ms2bin(stimdur+100, Fs);
+% # of samples to record
+recordsamples = ms2bin(stimdur+200, Fs);
+
+% time to wait for 
+timewait = 1100;
+timeout = 2000;
+
 
 % open DAP
 %	will create several handles to predefined pipes to communicate
@@ -60,9 +69,7 @@ dappstr(hTextToDap,'START');
 % Collect data
 disp('Collecting the response data')
 pause(0.1)
-% Get response 
-timewait = 1100;
-timeout = 2000;
+% Get response
 response = dapgetm(hBinFromDap, [1, recordsamples], 'int16', timewait, timeout);
 
 % Terminate DAP processing and shut down everything
@@ -71,5 +78,14 @@ dappstr(hTextToDap,'STOP');
 % close all pipes/streams
 dapallclose();
 
+% plot stimulus, response
 figure(1)
+subplot(211)
+plot(stimulus, '.')
+subplot(212)
 plot(response, '.-')
+
+% Find onset of stimulus
+onsetbin = min(find(response>1000));
+onsetms = bin2ms(onsetbin, Fs);
+fprintf('Stim onset = %s ms (%d samples)\n', onsetms, onsetbin); 

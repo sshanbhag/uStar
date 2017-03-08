@@ -1,0 +1,32 @@
+stimresp
+Fs = 400000
+Opening the predefined handles to the DAP board.
+4194304 bytes available
+Downloading the stimulus data
+40001.0 points sent
+4116350 bytes available
+Collecting the response data
+All opened connections to DAP boards closed.
+Stim onset = 8.651750e+01 ms (34607 samples)
+
+stimresp
+Fs = 200000
+Opening the predefined handles to the DAP board.
+4194304 bytes available
+Downloading the stimulus data
+20001.0 points sent
+4156350 bytes available
+Collecting the response data
+All opened connections to DAP boards closed.
+Stim onset = 1.594500e+01 ms (3189 samples)
+
+stimresp
+Fs = 500000
+Opening the predefined handles to the DAP board.
+4194304 bytes available
+Downloading the stimulus data
+50001.0 points sent
+4096350 bytes available
+Collecting the response data
+All opened connections to DAP boards closed.
+Stim onset = 1.071780e+02 ms (53589 samples)
