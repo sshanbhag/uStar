@@ -13,12 +13,14 @@ variable   INSWITCH word = 0
 idefine  indata 1
   set ipipe0 S0
   time 2
+  htrigger oneshot
 end
 
 // output stream
 odefine outdata 1
 	set opipe0 a0
 	time 2
+   htrigger oneshot
 	sample burst
 end
 
