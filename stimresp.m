@@ -70,7 +70,8 @@ dappstr(hTextToDap,'START');
 disp('Collecting the response data')
 pause(0.1)
 % Get response
-response = dapgetm(hBinFromDap, [1, recordsamples], 'int16', timewait, timeout);
+[response, ret] = dapgetm(hBinFromDap, [1, recordsamples], 'int16', timewait, timeout);
+fprintf('dapgetm returned: %d\n', ret);
 
 % Terminate DAP processing and shut down everything
 dappstr(hTextToDap,'STOP');
@@ -82,8 +83,12 @@ dapallclose();
 figure(1)
 subplot(211)
 plot(stimulus, '.')
+title('DAC0 Output')
+xlabel('samples')
 subplot(212)
 plot(response, '.-')
+title('S0 Input')
+xlabel('samples')
 
 % Find onset of stimulus
 onsetbin = min(find(response>1000));

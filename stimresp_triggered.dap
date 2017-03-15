@@ -1,6 +1,6 @@
 // Ouput signal data from the PC host, 
 // Return the resulting waveform to the host. 
-// 
+// Uses Hardware triggers for input and output
 
 // reset system
 reset
@@ -10,15 +10,19 @@ variable   INSWITCH word = 0
 
 // define input stream
 // Sample the input signal at 500,000 (1 / 2 usec) samples per second
-idefine  indata 1
+idefine indata 1
   set ipipe0 S0
   time 2
   htrigger oneshot
+  sample burst
+  // default input duration will be 1 second (500,000 samples)
+  count 150000
 end
 
 // output stream
+// update output at 500,000 (1 / 2 usec) samples per second
 odefine outdata 1
-	set opipe0 a0
+	set opipe0 A0
 	time 2
    htrigger oneshot
 	update burst
