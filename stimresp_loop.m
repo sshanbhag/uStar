@@ -1,21 +1,22 @@
-%% stimresp.m %%
+%% stimresp_triggered.m %%
 % This example script simulates stimulus-response activity. It writes 
 % a matrix of 'stimulus' data to the DAP board. The 'response' 
 % data is returned back to the application.
 % 
 
 
-% define sample rate from sample interval (specified in stimresp.dap)
+% define sample rate from sample interval 
+%(specified in stimresp_triggered.dap)
 dt = 2e-6;
 Fs = 1/dt;
 % scaling factor for stimulus
 stimamp = 10000;
 % stimulus duration (ms)
 stimdur = 100;
-% stimulus frequency (Hz)
+% stimulus frequency (Hz) (will be randomized on each trial)
 stimfreq = 100;
 % # of samples to record
-recordsamples = ms2bin(stimdur+200, Fs);
+recordsamples =0.001*(stimdur+200)*Fs;
 
 % time to wait for data (milliseconds)
 timewait = 5000;
@@ -34,24 +35,28 @@ timeout = 10000;
 % 							DAPL equivalend is $BinIn							
 dapallopen();
 
-% Configure DAP using DAPL command file stimresp.dap
+% Configure DAP using DAPL command file stimresp_triggered.dap
 cnfg = dapcnfig(hTextToDap, 'stimresp_triggered.dap');
 if cnfg < 1 
   error('Error configuring DAP')
 end
 
-% Start the DAP board sampling and calculations
-dappstr(hTextToDap,'START');
+dappstr(hTextToDap, 'hello');
+message=dapgstr(hTextFromDap,250)
+
 
 % get bytes available in DAP memory; should be max amount (or close to it)
 nBytes1 = dappavl(hBinToDap);
 fprintf('%d bytes available\n', nBytes1)
 
+% initialize loopFlag
 loopFlag = true;
 
 while loopFlag
-
-	% create stimulus
+	% Start the DAP board sampling and calculations
+	dappstr(hTextToDap,'START');
+	
+	% create stimulus (sinusoid with randomized frequency)
 	sf = randi(stimfreq*[1 2]);
 	stimulus = stimamp*sin2array( synmonosine(stimdur, Fs, sf, 1, 0), ...
 											5, Fs);
@@ -88,7 +93,9 @@ while loopFlag
 	[response, ret] = dapgetm(hBinFromDap, [1, recordsamples], ...
 												'int16', timewait, timeout);
 	fprintf('dapgetm returned: %d\n', ret);
-										
+	
+	% Terminate DAP processing and shut down everything
+	dappstr(hTextToDap,'STOP');
 
 	% plot stimulus, response
 	figure(1)
@@ -103,13 +110,21 @@ while loopFlag
 	fprintf('Stim onset = %s ms (%d samples)\n', onsetms, onsetbin); 
 	
 % 	% flush output stream
- 	ret = dapflsho(hBinToDap);
+%  	ret = dapflsho(hBinToDap);
 	
 	% continue loop?
 	loopFlag = logical(query_user('Continue', 1));
 end
+
 % Terminate DAP processing and shut down everything
 dappstr(hTextToDap,'STOP');
+
+ret = dappstr(hTextToDap, 'DIPLAY EMSG')
+[textFromDap, ret] = dapgstr(hTextFromDap, 100);
+fprintf('message:\n<%s>\n', textFromDap);
+
+dappstr(hTextToDap, 'hello');
+message=dapgstr(hTextFromDap,250)
 
 % close all pipes/streams
 dapallclose();
