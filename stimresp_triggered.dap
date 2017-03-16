@@ -15,8 +15,8 @@ idefine indata 1
   time 2
   htrigger oneshot
   sample burst
-  // default input duration will be 1 second (500,000 samples)
-  count 150000
+  // default input duration will be 2 seconds (1,000,000 samples)
+  count 1000000
 end
 
 // output stream

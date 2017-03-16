@@ -1,6 +1,13 @@
 %% triggeredIO.m %%
 
-
+% max value is 32767
+% output range is set to +- 5 V
+% input range is set to +/- 10 V
+MAXINT = (2^15) - 1;
+% 1V -> 3165
+% 5V -> 15581
+% 10V -> 32767
+% V = (X/32768) * F
 %-------------------------------------------------------------------------
 %-------------------------------------------------------------------------
 %% Settings for IO
@@ -11,16 +18,26 @@
 dt = 2e-6;
 Fs = 1/dt;
 % scaling factor for stimulus
-stimamp = 10000;
+stimamp = MAXINT;
 % stimulus duration (ms)
-stimdur = 100;
+stimdur = 600;
+% stimulus delay (ms)
+stimdelay = 100;
+% stimulus ramp time (ms)
+stimramp = 5;
 % stimulus frequency (Hz) (will be randomized on each trial)
 stimfreq = 100;
+% post stim record time (ms)
+poststimdur = 100;
+% time to record
+recorddur = stimdur + stimdelay + poststimdur;
 % # of samples to record
-recordsamples =0.001*(stimdur+200)*Fs;
+recordsamples = 0.001*(recorddur)*Fs;
 % time to wait for data (milliseconds)
 timewait = 5000;
 timeout = 10000;
+
+loadtime = 2*(0.001*stimdur);
 
 %-------------------------------------------------------------------------
 %-------------------------------------------------------------------------
@@ -91,14 +108,16 @@ while loopFlag
 	dappstr(hTextToDap,'START');
 	
 	% create stimulus (sinusoid with randomized frequency)
-	sf = randi(stimfreq*[1 2]);
+	sf = randi(stimfreq*[0.5 2]);
 	stimulus = stimamp*sin2array( synmonosine(stimdur, Fs, sf, 1, 0), ...
-											5, Fs);
+											stimramp, Fs);
 	% add some "clicks" to indicate start and stop of stimulus
 	stimulus(1) = stimamp;
 	stimulus(end) = -1*stimamp;
 	% make sure end of stimulus is 0
 	stimulus = [stimulus 0]; %#ok<AGROW>
+	% insert delay
+	stimulus = insert_delay(stimulus, stimdelay, Fs);
 	
 	% plot stimulus, response
 	figure(100)
@@ -116,19 +135,18 @@ while loopFlag
 	fprintf('%d bytes available\n', nBytes2)
 
 	% set input count to recordsamples
-% 	cmdStr = sprintf('EDIT INDATA COUNT %d\n', recordsamples);
-% 	ret = dappstr(hTextToDap, cmdStr);
-% 	fprintf('%s returned: %d\n', cmdStr, ret);
-	% pause
-	pause(0.1)
+%  	cmdStr = sprintf('EDIT INDATA COUNT %d', recordsamples);
+%  	ret = dappstr(hTextToDap, cmdStr);
+%  	fprintf('%s returned: %d\n', cmdStr, ret);
+	% pause to allow data transfer
+	pause(loadtime)
 	
 	% Run IO by triggering TDT
 	% send trigger pulse
 	RPtrig(TDT.RZ5, 1);
 	
 	% pause
-	pause(0.1)
-
+	pause((2*recorddur) * 0.001)
 
 	% Collect data
 	fprintf('Collecting the response data\n')
@@ -143,7 +161,7 @@ while loopFlag
 	% plot stimulus, response
 	figure(100)
 	subplot(212)
-	plot(response, '.-')
+	plot(response*10/32768, '.-')
 	title('S0 Input')
 	xlabel('samples')
 
@@ -151,9 +169,12 @@ while loopFlag
 	onsetbin = min(find(response>1000)); %#ok<MXFND>
 	onsetms = bin2ms(onsetbin, Fs);
 	fprintf('Stim onset = %s ms (%d samples)\n', onsetms, onsetbin); 
+	fprintf('Max value = %d\n', max(response));
 	
-% 	% flush output stream
-%  	ret = dapflsho(hBinToDap);
+ 	% flush output stream
+  	ret = dapflsho(hBinToDap);
+ 	% flush input stream
+  	ret = dapflshi(hBinFromDap);
 	
 	% continue loop?
 	loopFlag = logical(query_user('Continue', 1));
