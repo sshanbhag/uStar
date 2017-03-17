@@ -1,4 +1,7 @@
 %% triggeredIO.m %%
+%
+% Test code that 
+
 
 % max value is 32767
 % output range is set to +- 5 V
