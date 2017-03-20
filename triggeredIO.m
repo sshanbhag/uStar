@@ -1,7 +1,34 @@
-%% triggeredIO.m %%
+%-------------------------------------------------------------------------
+% triggeredIO.m %
+%-------------------------------------------------------------------------
+% Script to test TDT triggering of output from Microstar Labs
+% DAP 5016a PCI card
 %
-% Test code that 
-
+% TDT and DAP hardware interfaces are initialized.
+% 
+% A loop is then entered to test output of different sinusoidal stimuli
+%
+% Within the loop, output sinusoids are generated and loaded onto the
+% output buffer of the DAP.
+%
+% The neurophysiology data acquisition system (Tucker Davis Technologies
+% System 3) sends a 1 ms duration, +5V pulse to the DAP board to trigger 
+% output of stimulus and recording of microphone data.
+% 
+% Upon completion of the output, recorded data are transferred to the 
+% host system for display, analysis and storage.
+% 
+% A new stimulus is then loaded onto the DAP system and the process is
+% repeated.
+% 
+% Hardware connections:
+% 	S0 (analog input ch. 0): output from calibration microphone
+% 	A0 (analog output ch. 0): power amplifier input
+% 
+% 	OXTIN (output trigger input): TTL from neurophys DAQ system
+% 	IXTIN (input trigger input): TTL from neurophys DAQ system
+% 
+% 
 
 % max value is 32767
 % output range is set to +- 5 V
