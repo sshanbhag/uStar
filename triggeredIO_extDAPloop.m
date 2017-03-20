@@ -61,46 +61,6 @@ zBUStrigA_PULSE(TDT.zBUS, 0, 4);
 
 %-------------------------------------------------------------------------
 %-------------------------------------------------------------------------
-%% Initialize DAP
-%-------------------------------------------------------------------------
-%-------------------------------------------------------------------------
-
-%-------------------------------------------------------------------------
-% open DAP
-%	This will create several handles to predefined pipes to communicate
-%	with the DAP board:
-% 		hTextToDap		command pipe for string commands to DAP
-% 							within DAP, this is #SysIn
-% 		hTextFromDap	command pipe for messages from DAP
-% 							DAPL equivalent is $SysOut
-% 		hBinFromDap		binary data delivery pipe from DAP
-% 							DAPL equivalent is $BinOut
-% 		hBinToDap		binary data pipe to DAP
-% 							DAPL equivalend is $BinIn							
-%-------------------------------------------------------------------------
-dapallopen();
-
-%-------------------------------------------------------------------------
-% Configure DAP using DAPL command file stimresp_triggered.dap
-%-------------------------------------------------------------------------
-cnfg = dapcnfig(hTextToDap, 'stimresp_triggered.dap');
-if cnfg < 1 
-  error('Error configuring DAP')
-end
-% test string IO
-dappstr(hTextToDap, 'hello');
-message = dapgstr(hTextFromDap,250);
-fprintf('Message from DAP:\n\t<%s>\n', message);
-
-%-------------------------------------------------------------------------
-% get bytes available in DAP memory; should be max amount (or close to it)
-%-------------------------------------------------------------------------
-nBytes1 = dappavl(hBinToDap);
-fprintf('%d bytes available\n', nBytes1)
-
-
-%-------------------------------------------------------------------------
-%-------------------------------------------------------------------------
 %% Loop!
 %-------------------------------------------------------------------------
 %-------------------------------------------------------------------------
@@ -109,7 +69,46 @@ fprintf('%d bytes available\n', nBytes1)
 loopFlag = true;
 
 while loopFlag
-	
+
+	%-------------------------------------------------------------------------
+	%-------------------------------------------------------------------------
+	%% Initialize DAP
+	%-------------------------------------------------------------------------
+	%-------------------------------------------------------------------------
+
+	%-------------------------------------------------------------------------
+	% open DAP
+	%	This will create several handles to predefined pipes to communicate
+	%	with the DAP board:
+	% 		hTextToDap		command pipe for string commands to DAP
+	% 							within DAP, this is #SysIn
+	% 		hTextFromDap	command pipe for messages from DAP
+	% 							DAPL equivalent is $SysOut
+	% 		hBinFromDap		binary data delivery pipe from DAP
+	% 							DAPL equivalent is $BinOut
+	% 		hBinToDap		binary data pipe to DAP
+	% 							DAPL equivalend is $BinIn							
+	%-------------------------------------------------------------------------
+	dapallopen();
+
+	%-------------------------------------------------------------------------
+	% Configure DAP using DAPL command file stimresp_triggered.dap
+	%-------------------------------------------------------------------------
+	cnfg = dapcnfig(hTextToDap, 'stimresp_triggered.dap');
+	if cnfg < 1 
+	  error('Error configuring DAP')
+	end
+	% test string IO
+	dappstr(hTextToDap, 'hello');
+	message = dapgstr(hTextFromDap,250);
+	fprintf('Message from DAP:\n\t<%s>\n', message);
+
+	%-------------------------------------------------------------------------
+	% get bytes available in DAP memory; should be max amount (or close to it)
+	%-------------------------------------------------------------------------
+	nBytes1 = dappavl(hBinToDap);
+	fprintf('%d bytes available\n', nBytes1)
+
 	% Start the DAP board for sampling and calculations
 	dappstr(hTextToDap,'START');
  	% flush output stream
@@ -193,6 +192,29 @@ while loopFlag
   	ret = dapflsho(hBinToDap);
  	% flush input stream
   	ret = dapflshi(hBinFromDap);
+% 	
+% 	% continue loop?
+% 	loopFlag = logical(query_user('Continue', 1));
+% 	if loopFlag
+% 		fprintf('continuing IO ...\n')
+% 	else
+% 		fprintf('exiting loop ...\n');
+% 	end
+
+	%-------------------------------------------------------------------------
+	%-------------------------------------------------------------------------
+	%% Close DAP hardware
+	%-------------------------------------------------------------------------
+	%-------------------------------------------------------------------------
+	% Terminate DAP processing and shut down everything
+	dappstr(hTextToDap,'STOP');
+	% check for errors
+	dappstr(hTextToDap, 'DIPLAY EMSG');
+	[textFromDap, ret] = dapgstr(hTextFromDap, 100);
+	fprintf('message:\n\t<%s>\n', textFromDap);
+	% close all pipes/streams
+	dapallclose();
+
 	
 	% continue loop?
 	loopFlag = logical(query_user('Continue', 1));
@@ -202,22 +224,7 @@ while loopFlag
 		fprintf('exiting loop ...\n');
 	end
 	
-end	% end WHILE loopFlag
-
-
-%-------------------------------------------------------------------------
-%-------------------------------------------------------------------------
-%% Close DAP hardware
-%-------------------------------------------------------------------------
-%-------------------------------------------------------------------------
-% Terminate DAP processing and shut down everything
-dappstr(hTextToDap,'STOP');
-% check for errors
-dappstr(hTextToDap, 'DIPLAY EMSG');
-[textFromDap, ret] = dapgstr(hTextFromDap, 100);
-fprintf('message:\n\t<%s>\n', textFromDap);
-% close all pipes/streams
-dapallclose();
+end
 
 %-------------------------------------------------------------------------
 %-------------------------------------------------------------------------
