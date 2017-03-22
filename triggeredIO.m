@@ -50,7 +50,7 @@ Fs = 1/dt;
 % scaling factor for stimulus
 stimamp = MAXINT;
 % stimulus duration (ms)
-stimdur = 900;
+stimdur = 800;
 % stimulus delay (ms)
 stimdelay = 100;
 % stimulus ramp time (ms)
@@ -137,11 +137,17 @@ loopFlag = true;
 
 while loopFlag
 	
-	% Configure DAP using DAPL command file stimresp_triggered.dap
-	cnfg = dapcnfig(hTextToDap, 'stimresp_triggered.dap');
-	if cnfg < 1 
-	  error('Error configuring DAP')
-	end
+% 	% reset handles
+% 	% Send a command to reset the DAP
+% 	tmp = dappstr(hTextToDap, 'RESET');
+% 	fprintf('reset returned <%d>\n', tmp)
+% 	pause(0.1)
+% 	
+% 	% Configure DAP using DAPL command file stimresp_triggered.dap
+% 	cnfg = dapcnfig(hTextToDap, 'stimresp_triggered.dap');
+% 	if cnfg < 1 
+% 	  error('Error configuring DAP')
+% 	end
 	
 	% Start the DAP board for sampling and calculations
 	dappstr(hTextToDap,'START');
@@ -158,7 +164,7 @@ while loopFlag
 	stimulus(1) = stimamp;
 	stimulus(end) = -1*stimamp;
 	% make sure end of stimulus is 0
-	stimulus = [stimulus 0]; %#ok<AGROW>
+	stimulus = [stimulus 0 0 0]; %#ok<AGROW>
 	% insert delay
 	stimulus = insert_delay(stimulus, stimdelay, Fs);
 	
@@ -166,7 +172,7 @@ while loopFlag
 	figure(100)
 	subplot(211)
 	plot(stimulus, '.')
-	title(sprintf('DAC0 Output, f = %d', sf));
+	title(sprintf('Output Signal, f = %d Hz', sf));
 	xlabel('samples');
 	drawnow
 	
@@ -177,6 +183,7 @@ while loopFlag
 
 	% loop while nBytes available are not consistent
 	oldBytes = dappavl(hBinToDap);
+	newBytes = 0;
 	fprintf('%d bytes available\n', oldBytes)
 	while oldBytes ~= newBytes
 		% get bytes available
@@ -222,9 +229,7 @@ while loopFlag
 	fprintf('Stim onset = %s ms (%d samples)\n', onsetms, onsetbin); 
 	fprintf('Max value = %d\n', max(response));
 	
-	% reset daq
-	
-	
+
  	% flush output stream
   	ret = dapflsho(hBinToDap);
  	% flush input stream
