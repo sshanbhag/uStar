@@ -1,12 +1,63 @@
-%% dapallopen %%
+%-------------------------------------------------------------------------
+% dapallopen()
+%-------------------------------------------------------------------------
+% xxxx
+%-------------------------------------------------------------------------
 %  Open DAP handles for all of the 'predefined' communication pipes on
 %  the specified DAP board. If any handle cannot be opened, all 
 %  handles are closed and an error condition terminate the run.
 %  If some of these handles are not required... no harm.
+%-------------------------------------------------------------------------
+%	Handles Opened:
+% 
+% 		Var Name			Pipe		Use
+%		-------------	--------	--------------------------------------------
+%		hDapW				dap0		board-level pipe (e.g., for dapreset(hDap))
+% 		hTextToDap		$SysIn	Commands going to DAPL system on DAP
+% 		hTextFromDap	$SysOut	Messages returned to host system from DAP
+% 		hBinToDap		$BinIn	Precomputed signals downloaded to DAP
+% 		hBinFromDap		$BinOut	Sample values delivered to host from DAP
 %
+%-------------------------------------------------------------------------
+% See Also: dapallclose, DAPtools for MATLAB pdf doc.
+%-------------------------------------------------------------------------
 
-% Open connection to DAP command pipe if not already opened
+%--------------------------------------------------------------------------
+% Sharad J. Shanbhag
+% sshanbhag@neomed.edu
+%--------------------------------------------------------------------------
+% Created: Original code by Microstar Labs (mstarlabs.com)
+%
+% Revision History:
+%	22 Mar 2017 (SJS): added hDapW variable for dap0 pipe
+%--------------------------------------------------------------------------
+
 disp('Opening the predefined handles to the DAP board.');
+
+% %--------------------------------------------------------------------------
+% % Open WRITE connection to DAP board pipe if not already opened
+% %--------------------------------------------------------------------------
+% if  exist('hDapW','var')
+% 	if  hDapW == 0
+% 		temp = dapopen('\\.\Dap0', 'write');
+% 	else
+% 		disp('Handle hDapW is already open')
+% 		temp = hDapW;
+% 	end
+% else
+% 	temp = dapopen('\\.\Dap0', 'write');
+% end
+% if  temp == 0
+% 	dapallclose()
+% 	error('Error opening DAP command text handle')
+% else
+% 	hDapW = temp;
+% end
+% 
+
+%--------------------------------------------------------------------------
+% Open connection to DAP command pipe if not already opened
+%--------------------------------------------------------------------------
 if  exist('hTextToDap','var')
     if  hTextToDap == 0
         temp = dapopen('\\.\Dap0\$SysIn', 'write');
@@ -29,7 +80,9 @@ dappstr(hTextToDap, 'RESET')
 pause(0.2);
 
 
+%--------------------------------------------------------------------------
 % Open connection to DAP message text pipe if not already opened
+%--------------------------------------------------------------------------
 if  exist('hTextFromDap','var')
     if  hTextFromDap == 0
         temp = dapopen('\\.\Dap0\$SysOut', 'read');
@@ -50,7 +103,9 @@ end
 dapflshi(hTextFromDap);
 
 
+%--------------------------------------------------------------------------
 % Open connection to DAP binary data delivery pipe if not already opened
+%--------------------------------------------------------------------------
 if  exist('hBinFromDap','var')
     if  hBinFromDap == 0
         temp = dapopen('\\.\Dap0\$BinOut', 'read');
@@ -71,7 +126,9 @@ end
 dapflshi(hBinFromDap);
 
 
+%--------------------------------------------------------------------------
 % Open connections to DAP binary download pipe if not already opened
+%--------------------------------------------------------------------------
 if  exist('hBinToDap','var')
     if  hBinToDap == 0
         temp = dapopen('\\.\Dap0\$BinIn', 'write');
@@ -88,11 +145,15 @@ if  temp == 0
 else
     hBinToDap = temp;
 end
+%--------------------------------------------------------------------------
 % Flush old DAP data in binary pipe, if any
+%--------------------------------------------------------------------------
 dapflsho(hBinToDap);
 
-
+%--------------------------------------------------------------------------
 % Indicate success in connecting to DAP board
+%	commented out, SJS
+%--------------------------------------------------------------------------
 % dappstr(hTextToDap, 'HELLO');
 % pause(0.2);
 % avail = dapgavl(hTextFromDap);

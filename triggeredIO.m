@@ -137,6 +137,12 @@ loopFlag = true;
 
 while loopFlag
 	
+	% Configure DAP using DAPL command file stimresp_triggered.dap
+	cnfg = dapcnfig(hTextToDap, 'stimresp_triggered.dap');
+	if cnfg < 1 
+	  error('Error configuring DAP')
+	end
+	
 	% Start the DAP board for sampling and calculations
 	dappstr(hTextToDap,'START');
  	% flush output stream
@@ -215,6 +221,9 @@ while loopFlag
 	onsetms = bin2ms(onsetbin, Fs);
 	fprintf('Stim onset = %s ms (%d samples)\n', onsetms, onsetbin); 
 	fprintf('Max value = %d\n', max(response));
+	
+	% reset daq
+	
 	
  	% flush output stream
   	ret = dapflsho(hBinToDap);
