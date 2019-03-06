@@ -1,0 +1,31 @@
+// play_tone_pulse.dap
+//
+// This script is used by the playwav.m application to move 
+// sample data from two signal channels to the DAP board's
+// output hardware. Clocked digital to analog output devices then
+// reconstruct the signals.
+//
+reset
+
+// This configuration expects a 2-channel data transfer with
+// samples to be regenerated at a 10000 sample per second rate
+// on each channel, for a total duration of 0.3 seconds.
+//
+// TIME defines time interval between sample updates in microseconds
+//  time   100.0		// was originally 50.0
+//  count  6000    // originally 100000 = 10000 x 2 channels x 5 seconds
+odefine  regen  2
+  set  opipe0   A0
+  set  opipe1   A1
+  time   50.0		// was originally 50.0
+end
+
+// Processing to transfer data from the data download binary pipe to
+// the output updating hardware.
+pdefine  transfer
+  copy($BinIn, OPipes(0,1))
+end
+
+// Begin the output as soon as the required minimum of data are
+// loaded into the hardware output buffers.
+start

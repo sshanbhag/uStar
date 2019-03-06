@@ -1,0 +1,43 @@
+// play_tone.dap
+//
+// This script is used by the play_tone.m script to move 
+// sample data from two signal channels to the DAP board's
+// output hardware. Clocked digital to analog output devices then
+// reconstruct the signals.
+// 
+// Hardware: DAP5016a/527
+// S/N: 88017
+// Interrupt Level: 30
+// PCI Bus Number 2, Slot Number 7
+// Server: \\.\Dap0
+// DAPL 3000
+//  Version: interface 1.04, build 1.52
+// DAPL 2000
+//  Version: interface 1.00, build 1.04
+
+// start by resetting board
+reset
+
+// This configuration expects a 1-channel data transfer with
+// samples to be regenerated at a 10000 sample per second rate
+// on each channel, for a total duration of 0.3 seconds.
+//
+// TIME defines time interval between sample updates in microseconds
+//	COUNT defines the total number of samples to update
+
+odefine  regen
+  channels 1
+  set  OP0   A0
+  time   100.0		// 10 us between updates, 100 us -> 10 kHz rate
+  count 3000      // 3000 total points -> 0.3 s total output time
+end
+
+// Processing to transfer data from the data download binary pipe to
+// the output updating hardware.
+pdefine  transfer
+  copy($BinIn, OP0)
+end
+
+// Begin the output as soon as the required minimum of data are
+// loaded into the hardware output buffers.
+start
