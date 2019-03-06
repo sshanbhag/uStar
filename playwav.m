@@ -41,6 +41,7 @@ fprintf('\n\n');
 recdata = recdata';
 % ramp data on/off
 recdata = sin2array(recdata, 100, Fs);
+recdata(2, :) = 1;
 
 % plot signals
 figure(1)
@@ -59,7 +60,7 @@ end
 
 % Send the data to the DAP board for playback.
 disp('Sending the data to the DAP board')
-dapputm(hBinToDap, recdata, 'double');
+dapputm(hBinToDap, recdata, 'int16');
 
 % Allow enough time for the playback to finish
 fprintf('Allow %.2f seconds for playback\n', Finfo.Duration);
