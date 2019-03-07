@@ -1,0 +1,4 @@
+Diagnostics:
+
+1) playwav.m
+no output. code is incorrect: output data should be recdata, not samples
