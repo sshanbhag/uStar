@@ -14,7 +14,7 @@ odefine  regen  2
   set  opipe0   A0
   set  opipe1   A1
   time   50.0
-  count  100000    // 10000 x 2 channels x 5 seconds
+  count  200000    // 10000 x 2 channels x 5 seconds
 end
 
 // Processing to transfer data from the data download binary pipe to

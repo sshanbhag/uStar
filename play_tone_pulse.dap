@@ -17,7 +17,10 @@ reset
 odefine  regen  2
   set  opipe0   A0
   set  opipe1   A1
-  time   50.0		// was originally 50.0
+// time calculation:  1e6 * (1/#channels) / Fs
+//  time   50.0		//  10 kHz
+//  time   5.0		// 100 kHz
+  time   2.0		// 250 kHz
 end
 
 // Processing to transfer data from the data download binary pipe to
