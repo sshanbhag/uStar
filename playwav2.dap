@@ -10,11 +10,13 @@ reset
 // This configuration expects a 2-channel data transfer with
 // samples to be regenerated at a 10000 sample per second rate
 // on each channel, for a total duration of 5 seconds.
+//
+// TIME defines time interval between sample updates in microseconds
 odefine  regen  2
   set  opipe0   A0
   set  opipe1   A1
-  time   50.0
-  count  200000    // 10000 x 2 channels x 5 seconds
+  time  50		//  50.0 us between each update (across both channels)
+  count  100000    // 100000 = 10000 x 2 channels x 5 seconds
 end
 
 // Processing to transfer data from the data download binary pipe to

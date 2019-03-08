@@ -1,0 +1,12 @@
+Diagnostics:
+
+1) playwav.m as delivered from Microstar:
+
+no output. code is incorrect: output data should be recdata, not samples
+
+data need to be properly scaled to +/- 32767; playwav doesn't do this.
+
+length of playwav.wav is longer than the 5 seconds of data (at 10kHz
+output rate) that playwav.dap and playwav.m are expecting
+
+fixed these issues, output looks ok.
